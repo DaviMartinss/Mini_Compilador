@@ -32,7 +32,7 @@ public class Token {
 	}
 	@Override
 	public String toString() {
-		return "Token [token=" + token + ", lexema=" + lexema + ", linha=" + linha + "]";
+		return "Token [token= " + token + ", lexema= " + lexema + ", linha= " + linha + "]";
 	}
 	
 	

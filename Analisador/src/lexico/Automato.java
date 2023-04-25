@@ -1,5 +1,7 @@
 package lexico;
 
 public enum Automato {
-	IDENTIFICADOR, OPERADOR, ERRO
+	IDENTIFICADOR,
+	OPERADOR,
+	ERRO, COMANDO,
 }
