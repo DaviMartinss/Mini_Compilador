@@ -242,12 +242,10 @@ public class Analisador {
 					if (Simbolos.verificaSimbolo(c)) {
 						if(Float.valueOf(lexema) != null) {
 							
-							
-							token = new Token(TipoToken.VALFLOAT, lexema, numeroLinha);
-						
-						}
-						else if(Integer.valueOf(lexema) != null){
-							token = new Token(TipoToken.VALNUM, lexema, numeroLinha);
+							if(lexema.contains("."))
+								token = new Token(TipoToken.VALFLOAT, lexema, numeroLinha);
+							else
+								token = new Token(TipoToken.VALNUM, lexema, numeroLinha);
 						}
 						else {
 							throw new Exception("Erro na linha" + numeroLinha);
@@ -257,7 +255,7 @@ public class Analisador {
 						if (Character.isDigit(c) || (c == '.' && Character.isDigit(ReturnProximoChar())))
 							lexema += c;
 					}
-					}
+				}
 				
 			}
 				break;
