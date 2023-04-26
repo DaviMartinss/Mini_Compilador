@@ -240,13 +240,21 @@ public class Analisador {
 					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
 					if (Simbolos.verificaSimbolo(c)) {
-						if(Integer.valueOf(lexema) != null) {
+						if(Float.valueOf(lexema) != null) {
+							
+							
+							token = new Token(TipoToken.VALFLOAT, lexema, numeroLinha);
+						
+						}
+						else if(Integer.valueOf(lexema) != null){
 							token = new Token(TipoToken.VALNUM, lexema, numeroLinha);
-							//inteiro
+						}
+						else {
+							throw new Exception("Erro na linha" + numeroLinha);
 						}
 					}
 					else {
-						if (Character.isDigit(c))
+						if (Character.isDigit(c) || (c == '.' && Character.isDigit(ReturnProximoChar())))
 							lexema += c;
 					}
 					}
