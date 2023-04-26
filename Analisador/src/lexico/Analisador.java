@@ -68,6 +68,15 @@ public class Analisador {
 		return proximo;
 	}
 	
+	public boolean IsLetra(String str) {
+		if (str.length() == 1) {
+			if (Character.isLetter(str.charAt(0)))
+				return true;
+		}
+		
+		return false;
+	}
+
 	public Token capturaToken() throws Exception {
 		Token token = null;
 		Automato automato = Automato.OPERADOR;
@@ -206,6 +215,8 @@ public class Analisador {
 							}else {
 									if(lexema.charAt(0) == '@') {
 										token = new Token(TipoToken.IDVAR, lexema, numeroLinha);	
+									} else if(IsLetra(lexema)) {
+										token = new Token(TipoToken.VAL_LETRA, lexema, numeroLinha);	
 									}
 									else {
 										throw new Exception("Erro na linha" + numeroLinha);
@@ -224,12 +235,14 @@ public class Analisador {
 			case DIGITO:
 			{
 				c = getChar();
+				
 				if (c == 0) {
 					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
 					if (Simbolos.verificaSimbolo(c)) {
 						if(Integer.valueOf(lexema) != null) {
 							token = new Token(TipoToken.VALNUM, lexema, numeroLinha);
+							//inteiro
 						}
 					}
 					else {
