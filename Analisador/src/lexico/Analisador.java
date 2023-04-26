@@ -68,7 +68,7 @@ public class Analisador {
 		return proximo;
 	}
 	
-	public Token capturaToken() {
+	public Token capturaToken() throws Exception {
 		Token token = null;
 		Automato automato = Automato.OPERADOR;
 		String lexema = "";
@@ -148,6 +148,9 @@ public class Analisador {
 						if(Character.isLetter(c) || (c == '@' && Character.isLetter(ReturnProximoChar()))) {
                 			automato = Automato.IDENTIFICADOR;
                 			lexema +=c;
+                		}else {
+                			automato = Automato.DIGITO;
+                			lexema +=c;
                 		}
 					}
 				}
@@ -187,10 +190,26 @@ public class Analisador {
 						}
 							break;
 						
-						default: {
+						case "true": {
+							token = new Token(TipoToken.VALBOOL, lexema, numeroLinha);
+						}
+							break;
 							
-							if(lexema.charAt(0) == '@') {
-								token = new Token(TipoToken.IDVAR, lexema, numeroLinha);	
+						case "false": {
+							token = new Token(TipoToken.VALBOOL, lexema, numeroLinha);
+						}
+						
+							break;
+						default: {
+							if (c == 0) {
+								token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
+							}else {
+									if(lexema.charAt(0) == '@') {
+										token = new Token(TipoToken.IDVAR, lexema, numeroLinha);	
+									}
+									else {
+										throw new Exception("Erro na linha" + numeroLinha);
+									}
 							}
 						}
 							break;
@@ -200,6 +219,29 @@ public class Analisador {
 					if (Character.isLetterOrDigit(c))
 						lexema += c;
 				}
+				break;
+				
+			case DIGITO:
+			{
+				c = getChar();
+				if (c == 0) {
+					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
+				}else {
+					if (Simbolos.verificaSimbolo(c)) {
+						if(Integer.valueOf(lexema) != null) {
+							token = new Token(TipoToken.VALNUM, lexema, numeroLinha);
+						}
+					}
+					else {
+						if (Character.isDigit(c))
+							lexema += c;
+					}
+					}
+				
+			}
+				break;
+				
+				
 			}// switch aut�mato 
 		} // while
 		return token;
@@ -212,14 +254,16 @@ public class Analisador {
 			lexico.abreArquivo("teste.txt");
 			token = lexico.capturaToken();
 			while (token.getToken() != TipoToken.EOF) {
-				if(token != null)
-					System.out.println(token.toString());
+				System.out.println(token.toString());
 				token = lexico.capturaToken();
 			}
 			System.out.println(token.toString());
 			lexico.fechaArquivo("teste.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
 		}
 
 	}
