@@ -68,13 +68,25 @@ public class Analisador {
 		return proximo;
 	}
 	
-	public boolean IsLetra(String str) {
+	public boolean IsChar(String str) {
 		if (str.length() == 1) {
-			if (Character.isLetter(str.charAt(0)))
+			if (Character.isLetterOrDigit(str.charAt(0)))
 				return true;
 		}
 		
 		return false;
+	}
+	
+	public boolean IsFloat(String str) {
+		try {
+		    Float.parseFloat(str);
+		    
+		    return true;
+		    
+		} catch(NumberFormatException e) {
+		    
+		   return false;
+		}
 	}
 
 	public Token capturaToken() throws Exception {
@@ -110,20 +122,28 @@ public class Analisador {
 					token = new Token(TipoToken.OPIGUAL, "=", numeroLinha);
 				}
 					break;
-				// -----------------------------------//
+					
 				case '&': {
 					if (proximoChar('&'))
 						token = new Token(TipoToken.OPAND, "&&", numeroLinha);
+					else {
+						posicaoLinha--;
+						token = new Token(TipoToken.SIMBOLO, "&", numeroLinha);
+					}
 				}
 					break;
 
 				case '|': {
 					if (proximoChar('|'))
 						token = new Token(TipoToken.OPOR, "||", numeroLinha);
+					else {
+						posicaoLinha--;
+						token = new Token(TipoToken.SIMBOLO, "|", numeroLinha);
+					}
 				}
 					break;
 				case '+': {
-					token = new Token(TipoToken.OPSUM, "*", numeroLinha);
+					token = new Token(TipoToken.OPSUM, "+", numeroLinha);
 				}
 					break;
 				case '-': {
@@ -131,36 +151,130 @@ public class Analisador {
 				}
 					break;
 				case '*': {
-					token = new Token(TipoToken.OPMULT, "*", numeroLinha);
+					if (proximoChar('/'))
+						token = new Token(TipoToken.COMENT_CLOSE, "*/", numeroLinha);
+					else {
+						posicaoLinha--;
+						token = new Token(TipoToken.OPMULT, "*", numeroLinha);
+					}
 				}
 					break;
 				case '/': {
-					token = new Token(TipoToken.OPDIV, "/", numeroLinha);
+					if (proximoChar('*'))
+						token = new Token(TipoToken.COMENT_OPEN, "/*", numeroLinha);
+					else {
+						posicaoLinha--;
+						token = new Token(TipoToken.OPDIV, "/", numeroLinha);
+					}
 				}
 					break;
 				case '%': {
 					token = new Token(TipoToken.OPMOD, "%", numeroLinha);
 				}
 					break;
+					
 				case ':': {
 					if (proximoChar('='))
 						token = new Token(TipoToken.CMDATR, ":=", numeroLinha);
 					else {
 						posicaoLinha--;
+						token = new Token(TipoToken.SIMBOLO, ":", numeroLinha);
 					}
+				}
+					break;
+				
+				case '[': {
+					token = new Token(TipoToken.SIMBOLO, "[", numeroLinha);
+				}
+					break;
+					
+				case ']': {
+					token = new Token(TipoToken.SIMBOLO, "]", numeroLinha);
+				}
+					break;
+				
+				case '#': {
+					token = new Token(TipoToken.SIMBOLO, "#", numeroLinha);
+				}
+					break;
+				case '.': {
+					token = new Token(TipoToken.SIMBOLO, ".", numeroLinha);
+				}
+					break;
+				case ',': {
+					token = new Token(TipoToken.SIMBOLO, ",", numeroLinha);
+				}
+					break;
+				case ';': {
+					token = new Token(TipoToken.IDTERMINADOR, ";", numeroLinha);
+				}
+					break;
+				case '$': {
+					token = new Token(TipoToken.SIMBOLO, "$", numeroLinha);
+				}
+					break;
+				case '(': {
+					token = new Token(TipoToken.SIMBOLO, "(", numeroLinha);
+				}
+					break;
+				case ')': {
+					token = new Token(TipoToken.SIMBOLO, ")", numeroLinha);
+				}
+					break;
+				case '{': {
+					token = new Token(TipoToken.SIMBOLO, "{", numeroLinha);
+				}
+					break;
+				case '}': {
+					token = new Token(TipoToken.SIMBOLO, "}", numeroLinha);
+				}
+					break;
+				case '~': {
+					token = new Token(TipoToken.SIMBOLO, "~", numeroLinha);
+				}
+					break;
+				case '^': {
+					token = new Token(TipoToken.SIMBOLO, "^", numeroLinha);
+				}
+					break;
+				case '`': {
+					token = new Token(TipoToken.SIMBOLO, "`", numeroLinha);
+				}
+					break;
+				
+				case 'º': {
+					token = new Token(TipoToken.SIMBOLO, "º", numeroLinha);
+				}
+					break;
+				case '!': {
+					token = new Token(TipoToken.OPNEGACAO, "!", numeroLinha);
+				}
+					break;
+				case '?': {
+					token = new Token(TipoToken.SIMBOLO, "?", numeroLinha);
 				}
 					break;
 				default: {
 					if (c == 0)
 						token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
-					else{ 
+					else{
 						if(Character.isLetter(c) || (c == '@' && Character.isLetter(ReturnProximoChar()))) {
                 			automato = Automato.IDENTIFICADOR;
                 			lexema +=c;
-                		}else {
-                			automato = Automato.DIGITO;
-                			lexema +=c;
-                		}
+                		}else if(c == '@') {
+                			if(Simbolos.verificaSimbolo(c))
+                				token = new Token(TipoToken.SIMBOLO, "@", numeroLinha);
+                		}else if(Character.isDigit(c))
+                		 {
+                		 	automato = Automato.DIGITO;
+                		 	lexema +=c;
+                		 }
+                		 else 
+                		 {	
+                			if(!Simbolos.verificaSimbolo(c))
+                				throw new Exception("Erro na linha" + numeroLinha);
+						 }
+                		
 					}
 				}
 					break;
@@ -190,6 +304,13 @@ public class Analisador {
 							token = new Token(TipoToken.IDTIPO, lexema, numeroLinha);
 						}
 							break;
+							
+						case "CONST": {
+							token = new Token(TipoToken.IDCONTANTE, lexema, numeroLinha);
+						}
+						
+							break;
+							
 						case "if": {
 							token = new Token(TipoToken.CMDIF, lexema, numeroLinha);
 						}
@@ -207,6 +328,40 @@ public class Analisador {
 						case "false": {
 							token = new Token(TipoToken.VALBOOL, lexema, numeroLinha);
 						}
+							break;
+							
+						case "static": {
+							token = new Token(TipoToken.PALAVRA_CHAVE, lexema, numeroLinha);
+						}
+							break;
+							
+						case "void": {
+							token = new Token(TipoToken.PALAVRA_CHAVE, lexema, numeroLinha);
+						}
+						
+							break;
+							
+						case "Main": {
+							token = new Token(TipoToken.PALAVRA_CHAVE, lexema, numeroLinha);
+						}
+						
+							break;
+							
+						case "then": {
+							token = new Token(TipoToken.PALAVRA_CHAVE, lexema, numeroLinha);
+						}
+						
+							break;
+							
+						case "do": {
+							token = new Token(TipoToken.PALAVRA_CHAVE, lexema, numeroLinha);
+						}
+						
+							break;
+							
+						case "end": {
+							token = new Token(TipoToken.PALAVRA_CHAVE, lexema, numeroLinha);
+						}
 						
 							break;
 						default: {
@@ -215,8 +370,8 @@ public class Analisador {
 							}else {
 									if(lexema.charAt(0) == '@') {
 										token = new Token(TipoToken.IDVAR, lexema, numeroLinha);	
-									} else if(IsLetra(lexema)) {
-										token = new Token(TipoToken.VAL_LETRA, lexema, numeroLinha);	
+									} else if(IsChar(lexema)) {
+										token = new Token(TipoToken.VAL_CHAR, lexema, numeroLinha);	
 									}
 									else {
 										throw new Exception("Erro na linha" + numeroLinha);
@@ -240,7 +395,7 @@ public class Analisador {
 					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
 					if (Simbolos.verificaSimbolo(c)) {
-						if(Float.valueOf(lexema) != null) {
+						if(IsFloat(lexema)) {
 							
 							if(lexema.contains("."))
 								token = new Token(TipoToken.VALFLOAT, lexema, numeroLinha);
@@ -252,8 +407,10 @@ public class Analisador {
 						}
 					}
 					else {
-						if (Character.isDigit(c) || (c == '.' && Character.isDigit(ReturnProximoChar())))
+						if ((Character.isDigit(c)) || (c == '.'))
 							lexema += c;
+						else
+							throw new Exception("Erro na linha " + numeroLinha);
 					}
 				}
 				
