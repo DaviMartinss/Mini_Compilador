@@ -261,8 +261,7 @@ public class Analisador {
 						if(Character.isLetter(c) || (c == '@' && Character.isLetter(ReturnProximoChar()))) {
                 			automato = Automato.IDENTIFICADOR;
                 			lexema +=c;
-                		}else if(c == '@') {
-                			if(Simbolos.verificaSimbolo(c))
+                		}else if(c == '@' && ReturnProximoChar() == ' ') {
                 				token = new Token(TipoToken.SIMBOLO, "@", numeroLinha);
                 		}else if(Character.isDigit(c))
                 		 {
