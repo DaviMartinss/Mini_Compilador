@@ -268,11 +268,18 @@ public class Analisador {
                 		}else if(c == '@' && ReturnProximoChar() == ' ') {
                 				token = new Token(TipoToken.SIMBOLO, "@", numeroLinha);
                 		}else if(Character.isDigit(c))
-                		 {
-                		 	automato = Automato.DIGITO;
-                		 	lexema +=c;
-                		 }
-                		 else 
+                		{
+                			if(Simbolos.verificaSimbolo(ReturnProximoChar()))
+                			{
+                				lexema += c;
+                				token = new Token(TipoToken.VALNUM, lexema, numeroLinha);
+                			}
+                			else {
+                				automato = Automato.DIGITO;
+                    		 	lexema +=c;
+                			}
+                		}
+                		else 
                 		 {	
                 			if(!Simbolos.verificaSimbolo(c))
                 				throw new Exception("Erro na linha" + numeroLinha);
