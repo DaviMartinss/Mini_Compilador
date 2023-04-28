@@ -151,8 +151,9 @@ public class Analisador {
 				}
 					break;
 				case '*': {
-					if (proximoChar('/'))
-						token = new Token(TipoToken.COMENT_CLOSE, "*/", numeroLinha);
+					if (proximoChar('/') && !lexema.contains("/*")){
+						throw new Exception("Erro na linha" + numeroLinha);
+					}
 					else {
 						posicaoLinha--;
 						token = new Token(TipoToken.OPMULT, "*", numeroLinha);
@@ -160,8 +161,11 @@ public class Analisador {
 				}
 					break;
 				case '/': {
-					if (proximoChar('*'))
-						token = new Token(TipoToken.COMENT_OPEN, "/*", numeroLinha);
+					if (proximoChar('*')){
+						//throw new Exception("Erro na linha" + numeroLinha);
+						automato = Automato.COMENTARIO;
+						lexema += "/*";
+					}
 					else {
 						posicaoLinha--;
 						token = new Token(TipoToken.OPDIV, "/", numeroLinha);
@@ -273,15 +277,17 @@ public class Analisador {
                 			if(!Simbolos.verificaSimbolo(c))
                 				throw new Exception("Erro na linha" + numeroLinha);
 						 }
-                		
 					}
 				}
 					break;
 				}
 				break;// switch caracter
 			case IDENTIFICADOR:
+				//
 				c = getChar();
-				if (Simbolos.verificaSimbolo(c)) {// verifica se é um lexema já pronto
+				if (Simbolos.verificaSimbolo(ReturnProximoChar())) {// verifica se é um lexema já pronto
+					
+					lexema += c;
 					switch (lexema) {
 						case "int": {
 							token = new Token(TipoToken.IDTIPO, lexema, numeroLinha);
@@ -393,9 +399,9 @@ public class Analisador {
 				if (c == 0) {
 					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
-					if (Simbolos.verificaSimbolo(c)) {
+					if (Simbolos.verificaSimbolo(ReturnProximoChar())) {
 						if(IsFloat(lexema)) {
-							
+							lexema += c;
 							if(lexema.contains("."))
 								token = new Token(TipoToken.VALFLOAT, lexema, numeroLinha);
 							else
@@ -415,7 +421,26 @@ public class Analisador {
 				
 			}
 				break;
+			
+			case COMENTARIO:{
+				c = getChar();
 				
+				if (c == 0) {
+					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
+				}else {
+					if (c == '*' && ReturnProximoChar() == '/'){
+						posicaoLinha++;
+						lexema += "*/";
+						token = new Token(TipoToken.COMENT, lexema, numeroLinha);	
+					}
+					else
+						lexema += c;
+				}
+			}
+				break;
+				
+			default:
+				throw new Exception("Erro na linha " + numeroLinha);
 				
 			}// switch aut�mato 
 		} // while
