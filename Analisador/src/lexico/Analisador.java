@@ -286,7 +286,7 @@ public class Analisador {
 
 				c = getChar();
 				
-				if (Simbolos.verificaSimbolo(ReturnProximoChar())) {// verifica se é um lexema já pronto
+				if (Simbolos.verificaSimbolo(ReturnProximoChar()) || Simbolos.verificaSimbolo(c)) {// verifica se é um lexema já pronto
 				
 					if(!Simbolos.verificaSimbolo(c))
 						lexema += c;
@@ -402,9 +402,13 @@ public class Analisador {
 				if (c == 0) {
 					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
-					if (Simbolos.verificaSimbolo(ReturnProximoChar())) {
-						if(IsFloat(lexema)) {
+					if (Simbolos.verificaSimbolo(ReturnProximoChar()) || Simbolos.verificaSimbolo(c)) {
+						
+						if(!Simbolos.verificaSimbolo(c))
 							lexema += c;
+						
+						if(IsFloat(lexema)) {
+							
 							if(lexema.contains("."))
 								token = new Token(TipoToken.VALFLOAT, lexema, numeroLinha);
 							else
