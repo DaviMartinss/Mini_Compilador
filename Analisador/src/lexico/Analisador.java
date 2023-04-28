@@ -283,11 +283,14 @@ public class Analisador {
 				}
 				break;// switch caracter
 			case IDENTIFICADOR:
-				//
+
 				c = getChar();
+				
 				if (Simbolos.verificaSimbolo(ReturnProximoChar())) {// verifica se é um lexema já pronto
+				
+					if(!Simbolos.verificaSimbolo(c))
+						lexema += c;
 					
-					lexema += c;
 					switch (lexema) {
 						case "int": {
 							token = new Token(TipoToken.IDTIPO, lexema, numeroLinha);
@@ -465,6 +468,5 @@ public class Analisador {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 		}
-
 	}
 }
