@@ -1,1 +1,21 @@
 static void Main(string[] @args){
+	int @a1, float @a2, char @a3, string @a4;
+	int @b[2], CONST int @b2 := 2;
+	bool @t, bool @f;	
+
+	@a1 := 2, @a2 := 3.5, @a3 := a;
+	@f = false;		
+	
+	if(@a2 > @a1) then
+		int @a1 := @a2;
+
+	else
+		int @a2 := @a1;
+	end
+
+	while (@a1 > @a2 | !(@f)) do
+		int @a5 = 5;
+	end
+	 
+	/*teste comentário
+}

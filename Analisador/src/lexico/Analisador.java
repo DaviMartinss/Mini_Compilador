@@ -330,6 +330,11 @@ public class Analisador {
 							token = new Token(TipoToken.CMDIF, lexema, numeroLinha);
 						}
 							break;
+							
+						case "else": {
+							token = new Token(TipoToken.CMDIF, lexema, numeroLinha);
+						}
+							break;
 						case "while": {
 							token = new Token(TipoToken.CMDWHILE, lexema, numeroLinha);
 						}
