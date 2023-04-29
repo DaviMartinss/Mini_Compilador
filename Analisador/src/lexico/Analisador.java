@@ -266,7 +266,13 @@ public class Analisador {
                 			automato = Automato.IDENTIFICADOR;
                 			lexema +=c;
                 		}else if(c == '@' && ReturnProximoChar() == ' ') {
-                				token = new Token(TipoToken.SIMBOLO, "@", numeroLinha);
+                			token = new Token(TipoToken.SIMBOLO, "@", numeroLinha);
+                		
+                		}else if (c == "'".charAt(0)) {
+                			
+                			automato = Automato.STRING;
+                			lexema +=c;
+                			
                 		}else if(Character.isDigit(c))
                 		{
                 			if(Simbolos.verificaSimbolo(ReturnProximoChar()))
@@ -445,16 +451,44 @@ public class Analisador {
 				c = getChar();
 				
 				if (c == 0) {
-					token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
+					if(lexema.contains("/*"))
+						throw new Exception("Erro na linha " + --numeroLinha);
+					else
+						token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
 					if (c == '*' && ReturnProximoChar() == '/'){
 						posicaoLinha++;
 						lexema += "*/";
 						token = new Token(TipoToken.COMENT, lexema, numeroLinha);	
 					}
+					
 					else
 						lexema += c;
 				}
+			}
+				break;
+			
+				
+			case STRING:{
+				c = getChar();
+				
+				if (c == 0) {
+					if(lexema.contains("'"))
+						throw new Exception("Erro na linha " + --numeroLinha);
+					else
+						token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
+				}else {
+					if (c == "'".charAt(0)){
+						posicaoLinha++;
+						lexema += c;
+						token = new Token(TipoToken.VAL_STRING, lexema, numeroLinha);	
+					}
+					
+					else
+						lexema += c;
+				}
+				
+				
 			}
 				break;
 				

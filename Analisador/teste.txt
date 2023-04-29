@@ -17,5 +17,10 @@ static void Main(string[] @args){
 		int @a5 = 5;
 	end
 	 
-	/*teste comentário
+	/* teste comentário */
+	
+	
+	'
+	teste
+	'
 }
