@@ -23,7 +23,7 @@ public class Sintatico {
 		//E();
 		//EscopoRepeticao();
 		//EscopoCondicional();
-		//ConsumirComandos();
+		ConsumirComandos();
 		//consumirExpArit();
 		//consumirExpRel();
 		EscopoDeclaracao();
@@ -39,7 +39,7 @@ public class Sintatico {
 	}
 	
 
-	private void Constante() throws Exception {
+	private void consumirConstante() throws Exception {
 		 
 		consumir(TipoToken.IDCONTANTE);
 		consumir(TipoToken.IDTIPO);
@@ -50,26 +50,30 @@ public class Sintatico {
 	}
 	
 	private void EscopoDeclaracao() throws Exception {
-
-		while (lookahed.getToken() == TipoToken.IDTIPO || 
-				lookahed.getToken() == TipoToken.IDCONTANTE)
+		
+		while (lookahed.getToken() == TipoToken.IDTIPO || lookahed.getToken() == TipoToken.IDCONTANTE)
 		{
 			if(lookahed.getToken() == TipoToken.IDTIPO) {
-				consumir(TipoToken.IDTIPO);
-				consumirItemDeclaracao();
-
-				while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
-					consumirLexema(TipoToken.SIMBOLO, ",");
-					consumirItemDeclaracao();
-				}
-
-				consumir(TipoToken.IDTERMINADOR);
-			}else {
-				Constante();
+				consumirDeclaracao();
+				
+			}else 
+			{
+				consumirConstante();
 			}
-			
-
 		}
+	}
+	
+	private void consumirDeclaracao() throws Exception {
+
+		consumir(TipoToken.IDTIPO);
+		consumirItemDeclaracao();
+
+		while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
+			consumirLexema(TipoToken.SIMBOLO, ",");
+			consumirItemDeclaracao();
+		}
+
+		consumir(TipoToken.IDTERMINADOR);
 	}
 	
 	private void consumirItemDeclaracao() throws Exception {
@@ -160,7 +164,9 @@ public class Sintatico {
 
 		while((lookahed.getToken() == TipoToken.CMDIF && lookahed.getLexema().equals("if")) ||
 			  (lookahed.getToken() == TipoToken.CMDWHILE && lookahed.getLexema().equals("while")) ||
-			  (lookahed.getToken() == TipoToken.IDVAR)	
+			  (lookahed.getToken() == TipoToken.IDVAR) ||
+			  (lookahed.getToken() == TipoToken.IDCONTANTE) || 
+			  (lookahed.getToken() == TipoToken.IDTIPO)
 			 )
 		{
 			
@@ -172,7 +178,12 @@ public class Sintatico {
 				
 			}else if(lookahed.getToken() == TipoToken.IDVAR) {
 				Atribuicao();
+				
+			}else if((lookahed.getToken() == TipoToken.IDCONTANTE) || (lookahed.getToken() == TipoToken.IDTIPO)) {
+				EscopoDeclaracao();
+				
 			}else {
+				
 				System.err.println("Erro na linha "+lookahed.getLinha());
 				System.err.println("entrada inválida "+lookahed.getToken());
 				throw new Exception("ERRO");
