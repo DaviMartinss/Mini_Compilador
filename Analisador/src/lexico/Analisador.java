@@ -201,10 +201,6 @@ public class Analisador {
 				}
 					break;
 				
-				case '#': {
-					token = new Token(TipoToken.SIMBOLO, "#", numeroLinha);
-				}
-					break;
 				case '.': {
 					token = new Token(TipoToken.SIMBOLO, ".", numeroLinha);
 				}
@@ -237,31 +233,12 @@ public class Analisador {
 					token = new Token(TipoToken.SIMBOLO, "}", numeroLinha);
 				}
 					break;
-				case '~': {
-					token = new Token(TipoToken.SIMBOLO, "~", numeroLinha);
-				}
-					break;
-				case '^': {
-					token = new Token(TipoToken.SIMBOLO, "^", numeroLinha);
-				}
-					break;
-				case '`': {
-					token = new Token(TipoToken.SIMBOLO, "`", numeroLinha);
-				}
-					break;
 				
-				case 'º': {
-					token = new Token(TipoToken.SIMBOLO, "º", numeroLinha);
-				}
-					break;
 				case '!': {
 					token = new Token(TipoToken.OPNEGACAO, "!", numeroLinha);
 				}
 					break;
-				case '?': {
-					token = new Token(TipoToken.SIMBOLO, "?", numeroLinha);
-				}
-					break;
+					
 				default: {
 					if (c == 0)
 						token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);

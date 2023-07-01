@@ -21,9 +21,9 @@ public class Sintatico {
 		//P();
 		//E();
 		//EscopoRepeticao();
-		//EscopoCondicional();
+		EscopoCondicional();
 		//ConsumirComandos();
-		consumirExpArit();
+		//consumirExpArit();
 		//consumirExpRel();
 		consumir(TipoToken.EOF);
 		System.out.println("Análise Finalizada");
@@ -285,7 +285,7 @@ public class Sintatico {
 		}
 	}
 	
-private void consumirValorNum() throws Exception {
+	private void consumirValorNum() throws Exception {
 		
 		TipoToken tokenAtual = lookahed.getToken();
 				
