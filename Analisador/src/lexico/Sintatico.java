@@ -58,6 +58,15 @@ public class Sintatico {
 			{
 				ConsumirComandos();
 			}
+			else if(lookahed.getToken() == TipoToken.COMENT) {
+				lookahed = lexico.capturaToken();
+				
+			}else {
+				System.err.println("Erro na linha "+lookahed.getLinha());
+				System.err.println("entrada inválida "+lookahed.getToken());
+				throw new Exception("ERRO");
+				
+			}
 			
 		}
 		

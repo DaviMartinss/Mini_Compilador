@@ -455,7 +455,7 @@ public class Analisador {
 						
 						posicaoLinha++;
 						lexema += "*/";
-						token = new Token(TipoToken.COMENT, lexema, numeroLinha);	
+						token = new Token(TipoToken.COMENT, lexema, numeroLinha);
 					}
 					
 					else
@@ -512,9 +512,14 @@ public class Analisador {
 			lexico.abreArquivo("teste.txt");
 			token = lexico.capturaToken();
 			while (token.getToken() != TipoToken.EOF) {
-				System.out.println(token.toString());
+				
+				if(token.getToken() != TipoToken.COMENT) {
+					System.out.println(token.toString());
+				}
+				
 				token = lexico.capturaToken();
 			}
+			
 			System.out.println(token.toString());
 			lexico.fechaArquivo("teste.txt");
 		} catch (IOException e) {
