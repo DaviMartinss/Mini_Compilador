@@ -38,7 +38,7 @@ public class Sintatico {
 		consumir(TipoToken.IDTERMINADOR);
 	}
 	
-<<<<<<< Updated upstream
+
 	private void Constante() throws Exception {
 		 
 		consumir(TipoToken.IDCONTANTE);
@@ -46,7 +46,8 @@ public class Sintatico {
 		consumir(TipoToken.IDVAR);
 		consumir(TipoToken.CMDATR);
 		consumirValorUnico();
-=======
+	}
+	
 	private void EscopoDeclaracao() throws Exception {
 		 
 		consumir(TipoToken.IDTIPO);
@@ -58,7 +59,6 @@ public class Sintatico {
 			consumir(TipoToken.IDVAR);
 		}
 		
->>>>>>> Stashed changes
 		consumir(TipoToken.IDTERMINADOR);
 	}
 	
