@@ -17,11 +17,11 @@ public class Sintatico {
 	
 	public void analise() throws Exception {
 		lookahed = lexico.capturaToken();
-		//Atribuicao();
+		Atribuicao();
 		//P();
 		//E();
 		//EscopoRepeticao();
-		EscopoCondicional();
+		//EscopoCondicional();
 		//ConsumirComandos();
 		//consumirExpArit();
 		//consumirExpRel();
@@ -41,7 +41,6 @@ public class Sintatico {
 		consumir(TipoToken.IDVAR);
 		consumir(TipoToken.CMDATR);
 		consumirValor();
-		
 		consumir(TipoToken.IDTERMINADOR);
 	}
 	
@@ -186,14 +185,13 @@ public class Sintatico {
 		consumirLexema(TipoToken.SIMBOLO, "(" );
 		consumirExpBool();
 		consumirLexema(TipoToken.SIMBOLO, ")" );
-		
 	}
 	
 	private void consumirExpArit() throws Exception {
 		consumirValorNum();
 		consumirOpArit();
 		consumirValorNum();
-				
+		
 		if (lookahed.getToken() == TipoToken.OPSUM ||
 			lookahed.getToken() == TipoToken.OPSUB 	||
 			lookahed.getToken() == TipoToken.OPMULT ||
@@ -207,8 +205,6 @@ public class Sintatico {
 				consumirValorNum();
 			}
 		}
-		
-		consumir(TipoToken.IDTERMINADOR);
 	}
 	
 	private void consumirExpRel() throws Exception {
@@ -239,14 +235,22 @@ public class Sintatico {
 
 	private void consumir(TipoToken token) throws Exception {
 		TipoToken tokenAtual = lookahed.getToken();
-		
+
 		if(tokenAtual == token) {
 			lookahed = lexico.capturaToken();
+		
 		}
 		else {
-			System.err.println("Erro na linha "+lookahed.getLinha());
-			System.err.println("entrada inválida "+lookahed.getToken());
-			throw new Exception("ERRO");
+			
+			if(lookahed.getToken() == TipoToken.IDVAR) {
+				Atribuicao();
+				
+			}else {
+				System.err.println("Erro na linha "+lookahed.getLinha());
+				System.err.println("entrada inválida "+lookahed.getToken());
+				throw new Exception("ERRO");	
+			}
+			
 		}
 	}
 	
@@ -256,7 +260,12 @@ public class Sintatico {
 				
 		switch (tokenAtual) {
 		case VALFLOAT:
-			lookahed = lexico.capturaToken();
+			if(lookahed.getToken() == TipoToken.VALFLOAT) {
+				consumirExpArit();
+			}else {
+				lookahed = lexico.capturaToken();
+			}
+			
 			break;
 			
 		case VAL_STRING:
@@ -272,10 +281,20 @@ public class Sintatico {
 			break;	
 			
 		case VALNUM:
-			lookahed = lexico.capturaToken();
+			if(lookahed.getToken() == TipoToken.VALNUM) {
+				consumirExpArit();
+			}else {
+				lookahed = lexico.capturaToken();
+			}
 			break;
+			
 		case IDVAR:
-			lookahed = lexico.capturaToken();
+			if(lookahed.getToken() == TipoToken.IDVAR) {
+				consumirExpArit();
+			}else {
+				lookahed = lexico.capturaToken();
+			}
+			
 			break;
 			
 		default:
@@ -288,7 +307,6 @@ public class Sintatico {
 	private void consumirValorNum() throws Exception {
 		
 		TipoToken tokenAtual = lookahed.getToken();
-				
 		switch (tokenAtual) {
 		case VALFLOAT:
 			lookahed = lexico.capturaToken();
