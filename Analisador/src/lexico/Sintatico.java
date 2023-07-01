@@ -46,23 +46,29 @@ public class Sintatico {
 		consumir(TipoToken.IDVAR);
 		consumir(TipoToken.CMDATR);
 		consumirValorUnico();
+		consumir(TipoToken.IDTERMINADOR);
 	}
 	
 	private void EscopoDeclaracao() throws Exception {
-		 
-		while (lookahed.getToken() == TipoToken.IDTIPO) {
-			
-			consumir(TipoToken.IDTIPO);
-			consumirItemDeclaracao();
-			
-			while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
-				
-				consumirLexema(TipoToken.SIMBOLO, ",");
+
+		while (lookahed.getToken() == TipoToken.IDTIPO || 
+				lookahed.getToken() == TipoToken.IDCONTANTE)
+		{
+			if(lookahed.getToken() == TipoToken.IDTIPO) {
+				consumir(TipoToken.IDTIPO);
 				consumirItemDeclaracao();
+
+				while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
+					consumirLexema(TipoToken.SIMBOLO, ",");
+					consumirItemDeclaracao();
+				}
+
+				consumir(TipoToken.IDTERMINADOR);
+			}else {
+				Constante();
 			}
 			
-			consumir(TipoToken.IDTERMINADOR);
-			
+
 		}
 	}
 	
