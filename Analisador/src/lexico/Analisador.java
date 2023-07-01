@@ -68,6 +68,10 @@ public class Analisador {
 		return proximo;
 	}
 	
+	public void ReturnGetChar() {// retorna posição da linha
+		posicaoLinha--;
+	}
+	
 	public boolean IsChar(String str) {
 		if (str.length() == 1) {
 			if (Character.isLetterOrDigit(str.charAt(0)))
@@ -296,8 +300,14 @@ public class Analisador {
 				}
 				break;// switch caracter
 			case IDENTIFICADOR:
-
+				
 				c = getChar();
+				
+				if(c == ';')
+				{
+					automato = Automato.OPERADOR;
+    				ReturnGetChar();
+				}
 				
 				if (Simbolos.verificaSimbolo(ReturnProximoChar()) || Simbolos.verificaSimbolo(c)) {// verifica se é um lexema já pronto
 				
@@ -450,6 +460,7 @@ public class Analisador {
 			case COMENTARIO:{
 				c = getChar();
 				
+			
 				if (c == 0) {
 					if(lexema.contains("/*"))
 						throw new Exception("Erro na linha " + --numeroLinha);
@@ -457,6 +468,14 @@ public class Analisador {
 						token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
 					if (c == '*' && ReturnProximoChar() == '/'){
+					
+						if(ReturnProximoChar() == ';')
+						{
+							automato = Automato.OPERADOR;
+		    				ReturnGetChar();
+						}
+						
+						
 						posicaoLinha++;
 						lexema += "*/";
 						token = new Token(TipoToken.COMENT, lexema, numeroLinha);	
@@ -479,9 +498,18 @@ public class Analisador {
 						token = new Token(TipoToken.EOF, "erro fim do arquivo", numeroLinha);
 				}else {
 					if (c == "'".charAt(0)){
+						
+						if(ReturnProximoChar() == ';')
+						{
+							automato = Automato.OPERADOR;
+		    				ReturnGetChar();
+						}
+						
 						posicaoLinha++;
 						lexema += c;
 						token = new Token(TipoToken.VAL_STRING, lexema, numeroLinha);	
+						
+						
 					}
 					
 					else
