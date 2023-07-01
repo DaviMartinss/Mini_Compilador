@@ -17,11 +17,11 @@ public class Sintatico {
 	
 	public void analise() throws Exception {
 		lookahed = lexico.capturaToken();
-		Atribuicao();
+		//Atribuicao();
 		//P();
 		//E();
 		//EscopoRepeticao();
-		//EscopoCondicional();
+		EscopoCondicional();
 		//ConsumirComandos();
 		//consumirExpArit();
 		//consumirExpRel();
@@ -189,20 +189,24 @@ public class Sintatico {
 	
 	private void consumirExpArit() throws Exception {
 		consumirValorNum();
-		consumirOpArit();
-		consumirValorNum();
 		
-		if (lookahed.getToken() == TipoToken.OPSUM ||
-			lookahed.getToken() == TipoToken.OPSUB 	||
-			lookahed.getToken() == TipoToken.OPMULT ||
-			lookahed.getToken() == TipoToken.OPDIV ||
-			lookahed.getToken() == TipoToken.OPMOD)
-		{
+		if(lookahed.getLexema() != ";") {
 			
-			while (lookahed.getLexema() != ";")
+			consumirOpArit();
+			consumirValorNum();
+			
+			if (lookahed.getToken() == TipoToken.OPSUM ||
+				lookahed.getToken() == TipoToken.OPSUB 	||
+				lookahed.getToken() == TipoToken.OPMULT ||
+				lookahed.getToken() == TipoToken.OPDIV ||
+				lookahed.getToken() == TipoToken.OPMOD)
 			{
-				consumirOpArit();
-				consumirValorNum();
+				
+				while (lookahed.getLexema() != ";")
+				{
+					consumirOpArit();
+					consumirValorNum();
+				}
 			}
 		}
 	}
