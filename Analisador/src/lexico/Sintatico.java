@@ -18,7 +18,7 @@ public class Sintatico {
 	public void analise() throws Exception {
 		lookahed = lexico.capturaToken();
 		//Atribuicao();
-		Constante();
+		//Constante();
 		//P();
 		//E();
 		//EscopoRepeticao();
@@ -51,16 +51,29 @@ public class Sintatico {
 	private void EscopoDeclaracao() throws Exception {
 		 
 		consumir(TipoToken.IDTIPO);
-		consumir(TipoToken.IDVAR);
+		consumirItemDeclaracao();
 		
 		while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
 			
 			consumirLexema(TipoToken.SIMBOLO, ",");
-			consumir(TipoToken.IDVAR);
+			consumirItemDeclaracao();
 		}
 		
 		consumir(TipoToken.IDTERMINADOR);
 	}
+	
+	private void consumirItemDeclaracao() throws Exception {
+		
+		consumir(TipoToken.IDVAR);
+		
+		if(lookahed.getToken() == TipoToken.SIMBOLO && lookahed.getLexema().equals("["))
+		{
+			consumirLexema(TipoToken.SIMBOLO, "[");
+			consumir(TipoToken.VALNUM);
+			consumirLexema(TipoToken.SIMBOLO, "]");
+		}
+	}
+	
 	
 	private void Atribuicao() throws Exception {
 
