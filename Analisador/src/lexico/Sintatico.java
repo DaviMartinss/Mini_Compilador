@@ -164,19 +164,13 @@ public class Sintatico {
 	}
 	
 	private void consumirExpBool() throws Exception {
-
-		consumir(TipoToken.IDVAR);
-		consumirOpRel();
-		consumir(TipoToken.IDVAR);
-
-		if (lookahed.getToken() == TipoToken.OPAND || lookahed.getToken() == TipoToken.OPOR) {
-
-			while (lookahed.getToken() != TipoToken.SIMBOLO && lookahed.getLexema() != ")") {
-				consumirOpLog();
-				consumir(TipoToken.IDVAR);
-				consumirOpRel();
-				consumir(TipoToken.IDVAR);
-			}
+		
+		consumirItemExpBol();
+		
+		while (lookahed.getToken() != TipoToken.SIMBOLO && lookahed.getLexema() != ")") {
+			
+			consumirOpExpBol();
+			consumirItemExpBol();
 		}
 	}
 	
@@ -256,6 +250,49 @@ public class Sintatico {
 			}
 			
 		}
+	}
+	
+	private void consumirItemExpBol() throws Exception {
+		
+		TipoToken tokenAtual = lookahed.getToken();
+				
+		switch (tokenAtual) {
+		
+		case VALBOOL:
+			lookahed = lexico.capturaToken();
+			break;	
+			
+		case IDVAR:
+			lookahed = lexico.capturaToken();
+			break;
+			
+		default:
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
+		}
+	}
+	
+	private void consumirOpExpBol() throws Exception {
+		
+		if(lookahed.getToken() == TipoToken.OPAND || lookahed.getToken() == TipoToken.OPOR) {
+			consumirOpLog();
+		}
+		else if((lookahed.getToken() == TipoToken.OPIGUAL) ||
+				(lookahed.getToken() == TipoToken.OPMAIOR) ||
+				(lookahed.getToken() == TipoToken.OPMENOR) ||
+				(lookahed.getToken() == TipoToken.OPMAIORIGUAL) ||
+				(lookahed.getToken() == TipoToken.OPMENORIGUAL) 
+			   )
+		{
+			consumirOpRel();
+		}
+		else {
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
+		}
+		
 	}
 	
 	private void consumirValor() throws Exception {
