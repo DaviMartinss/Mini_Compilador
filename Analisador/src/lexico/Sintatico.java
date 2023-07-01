@@ -26,6 +26,7 @@ public class Sintatico {
 		//ConsumirComandos();
 		//consumirExpArit();
 		//consumirExpRel();
+		EscopoDeclaracao();
 		consumir(TipoToken.EOF);
 		System.out.println("Análise Finalizada");
 	}
@@ -37,6 +38,7 @@ public class Sintatico {
 		consumir(TipoToken.IDTERMINADOR);
 	}
 	
+<<<<<<< Updated upstream
 	private void Constante() throws Exception {
 		 
 		consumir(TipoToken.IDCONTANTE);
@@ -44,6 +46,19 @@ public class Sintatico {
 		consumir(TipoToken.IDVAR);
 		consumir(TipoToken.CMDATR);
 		consumirValorUnico();
+=======
+	private void EscopoDeclaracao() throws Exception {
+		 
+		consumir(TipoToken.IDTIPO);
+		consumir(TipoToken.IDVAR);
+		
+		while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
+			
+			consumirLexema(TipoToken.SIMBOLO, ",");
+			consumir(TipoToken.IDVAR);
+		}
+		
+>>>>>>> Stashed changes
 		consumir(TipoToken.IDTERMINADOR);
 	}
 	
