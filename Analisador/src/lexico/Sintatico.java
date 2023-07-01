@@ -17,20 +17,55 @@ public class Sintatico {
 	
 	public void analise() throws Exception {
 		lookahed = lexico.capturaToken();
+		Programa();
 		//Atribuicao();
 		//Constante();
 		//P();
 		//E();
 		//EscopoRepeticao();
 		//EscopoCondicional();
-		ConsumirComandos();
+		//ConsumirComandos();
 		//consumirExpArit();
 		//consumirExpRel();
-		EscopoDeclaracao();
+		//EscopoDeclaracao();
 		consumir(TipoToken.EOF);
 		System.out.println("Análise Finalizada");
 	}
+	
+	private void Programa() throws Exception {
+		//static void Main (string[] @args){
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "static" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "void" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "Main" );
+		consumirLexema(TipoToken.SIMBOLO, "(" );
+		consumirLexema(TipoToken.IDTIPO, "string" );
+		consumirLexema(TipoToken.SIMBOLO, "[" );
+		consumirLexema(TipoToken.SIMBOLO, "]" );
+		consumir(TipoToken.IDVAR);
+		consumirLexema(TipoToken.SIMBOLO, ")" );
+		consumirLexema(TipoToken.SIMBOLO, "{" );
+		
+		while (lookahed.getLexema() != "}") {
+			
+			if(lookahed.getToken() == TipoToken.IDTIPO || lookahed.getToken() == TipoToken.IDCONTANTE) {
+				EscopoDeclaracao();
+				
+			}else if((lookahed.getToken() == TipoToken.CMDIF && lookahed.getLexema().equals("if")) ||
+					  (lookahed.getToken() == TipoToken.CMDWHILE && lookahed.getLexema().equals("while")) ||
+					  (lookahed.getToken() == TipoToken.IDVAR) ||
+					  (lookahed.getToken() == TipoToken.IDCONTANTE) || 
+					  (lookahed.getToken() == TipoToken.IDTIPO))
+			{
+				ConsumirComandos();
+			}
+			
+		}
+		
+		
+		consumirLexema(TipoToken.SIMBOLO, "}" );
 
+		
+	}
 	private void P() throws Exception {
 		 
 		consumir(TipoToken.IDTIPO);
