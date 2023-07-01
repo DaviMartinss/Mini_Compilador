@@ -50,16 +50,20 @@ public class Sintatico {
 	
 	private void EscopoDeclaracao() throws Exception {
 		 
-		consumir(TipoToken.IDTIPO);
-		consumirItemDeclaracao();
-		
-		while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
+		while (lookahed.getToken() == TipoToken.IDTIPO) {
 			
-			consumirLexema(TipoToken.SIMBOLO, ",");
+			consumir(TipoToken.IDTIPO);
 			consumirItemDeclaracao();
+			
+			while (lookahed.getToken() != TipoToken.IDTERMINADOR) {
+				
+				consumirLexema(TipoToken.SIMBOLO, ",");
+				consumirItemDeclaracao();
+			}
+			
+			consumir(TipoToken.IDTERMINADOR);
+			
 		}
-		
-		consumir(TipoToken.IDTERMINADOR);
 	}
 	
 	private void consumirItemDeclaracao() throws Exception {
