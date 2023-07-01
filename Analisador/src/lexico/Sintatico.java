@@ -18,10 +18,11 @@ public class Sintatico {
 	public void analise() throws Exception {
 		lookahed = lexico.capturaToken();
 		//Atribuicao();
+		Constante();
 		//P();
 		//E();
 		//EscopoRepeticao();
-		EscopoCondicional();
+		//EscopoCondicional();
 		//ConsumirComandos();
 		//consumirExpArit();
 		//consumirExpRel();
@@ -33,6 +34,16 @@ public class Sintatico {
 		 
 		consumir(TipoToken.IDTIPO);
 		consumir(TipoToken.IDVAR);
+		consumir(TipoToken.IDTERMINADOR);
+	}
+	
+	private void Constante() throws Exception {
+		 
+		consumir(TipoToken.IDCONTANTE);
+		consumir(TipoToken.IDTIPO);
+		consumir(TipoToken.IDVAR);
+		consumir(TipoToken.CMDATR);
+		consumirValorUnico();
 		consumir(TipoToken.IDTERMINADOR);
 	}
 	
@@ -345,6 +356,44 @@ public class Sintatico {
 		}
 	}
 	
+	private void consumirValorUnico() throws Exception {
+
+		TipoToken tokenAtual = lookahed.getToken();
+
+		switch (tokenAtual) {
+		case VALFLOAT:
+			lookahed = lexico.capturaToken();
+			break;
+
+		case VAL_STRING:
+			lookahed = lexico.capturaToken();
+			break;
+
+		case VAL_CHAR:
+			lookahed = lexico.capturaToken();
+			break;
+
+		case VALBOOL:
+			lookahed = lexico.capturaToken();
+			break;
+
+		case VALNUM:
+
+			lookahed = lexico.capturaToken();
+			break;
+
+		case IDVAR:
+			lookahed = lexico.capturaToken();
+
+			break;
+
+		default:
+			System.err.println("Erro na linha " + lookahed.getLinha());
+			System.err.println("entrada inválida " + lookahed.getToken());
+			throw new Exception("ERRO");
+		}
+	}
+
 	private void consumirValorNum() throws Exception {
 		
 		TipoToken tokenAtual = lookahed.getToken();
