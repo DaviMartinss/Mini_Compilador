@@ -7,7 +7,6 @@ import java.util.List;
 import lexico.*;
 
 public class Sintatico {
-	
 	public Token lookahed;
 	public Analisador lexico;
 	
@@ -17,17 +16,22 @@ public class Sintatico {
 	}
 	
 	public void analise() throws Exception {
-		
 		lookahed = lexico.capturaToken();
-		
 		Programa();
-		
+		//Atribuicao();
+		//Constante();
+		//P();
+		//E();
+		//EscopoRepeticao();
+		//EscopoCondicional();
+		//ConsumirComandos();
+		//consumirExpArit();
+		//consumirExpRel();
+		//EscopoDeclaracao();
 		consumir(TipoToken.EOF);
-		
 		System.out.println("Análise Finalizada");
 	}
 	
-	//Escopo GLOBAL PROGRAMA
 	private void Programa() throws Exception {
 		//static void Main (string[] @args){
 		consumirLexema(TipoToken.PALAVRA_CHAVE, "static" );
@@ -58,7 +62,9 @@ public class Sintatico {
 				lookahed = lexico.capturaToken();
 				
 			}else {
-				ErroInesperadoSintatico();
+				System.err.println("Erro na linha "+lookahed.getLinha());
+				System.err.println("entrada inválida "+lookahed.getToken());
+				throw new Exception("ERRO");
 				
 			}
 			
@@ -69,8 +75,24 @@ public class Sintatico {
 
 		
 	}
+	private void P() throws Exception {
+		 
+		consumir(TipoToken.IDTIPO);
+		consumir(TipoToken.IDVAR);
+		consumir(TipoToken.IDTERMINADOR);
+	}
 	
-	//Escopo geral da Declaração de variáveis ou Constantes
+
+	private void consumirConstante() throws Exception {
+		 
+		consumir(TipoToken.IDCONTANTE);
+		consumir(TipoToken.IDTIPO);
+		consumir(TipoToken.IDVAR);
+		consumir(TipoToken.CMDATR);
+		consumirValorUnico();
+		consumir(TipoToken.IDTERMINADOR);
+	}
+	
 	private void EscopoDeclaracao() throws Exception {
 		
 		while (lookahed.getToken() == TipoToken.IDTIPO || lookahed.getToken() == TipoToken.IDCONTANTE)
@@ -83,60 +105,6 @@ public class Sintatico {
 				consumirConstante();
 			}
 		}
-	}
-	
-	//Escopo geral do IF
-	private void EscopoCondicional() throws Exception {
-		consumir(TipoToken.CMDIF);
-		consumirLexema(TipoToken.SIMBOLO, "(" );
-		
-		if(lookahed.getToken() == TipoToken.OPNEGACAO)
-			ConsumirNegacao();
-		else
-			consumirExpBool();
-		
-		consumirLexema(TipoToken.SIMBOLO, ")" );
-		consumirLexema(TipoToken.PALAVRA_CHAVE, "then" );
-		
-		ConsumirComandos();
-		
-		if(lookahed.getToken() == TipoToken.CMDIF && lookahed.getLexema().equals("else")) {
-			ConsumirElse();
-			
-		}else if(lookahed.getToken() == TipoToken.PALAVRA_CHAVE && lookahed.getLexema().equals("end")) {
-			consumirLexema(TipoToken.PALAVRA_CHAVE, "end" );
-			
-		}else {
-			ErroInesperadoSintatico();
-		}
-	}
-
-	//Escopo geral do WHILE
-	private void EscopoRepeticao() throws Exception {
-
-		consumir(TipoToken.CMDWHILE);
-		consumirLexema(TipoToken.SIMBOLO, "(" );
-		
-		if(lookahed.getToken() == TipoToken.OPNEGACAO)
-			ConsumirNegacao();
-		else
-			consumirExpBool();
-		
-		consumirLexema(TipoToken.SIMBOLO, ")" );
-		consumirLexema(TipoToken.PALAVRA_CHAVE, "do" );
-		ConsumirComandos();
-		consumirLexema(TipoToken.PALAVRA_CHAVE, "end" );
-		
-	}
-
-	private void consumirConstante() throws Exception {
-		 
-		consumir(TipoToken.IDCONTANTE);
-		consumir(TipoToken.IDTIPO);
-		consumir(TipoToken.IDVAR);
-		consumir(TipoToken.CMDATR);
-		consumirValorUnico();
-		consumir(TipoToken.IDTERMINADOR);
 	}
 	
 	private void consumirDeclaracao() throws Exception {
@@ -173,8 +141,64 @@ public class Sintatico {
 		consumir(TipoToken.IDTERMINADOR);
 	}
 	
-	private void ConsumirElse() throws Exception {
+	private void EscopoCondicional() throws Exception {
+		consumir(TipoToken.CMDIF);
+		consumirLexema(TipoToken.SIMBOLO, "(" );
 		
+		if(lookahed.getToken() == TipoToken.OPNEGACAO)
+			ConsumirNegacao();
+		else
+			consumirExpBool();
+		
+		consumirLexema(TipoToken.SIMBOLO, ")" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "then" );
+		
+		ConsumirComandos();
+		
+		if(lookahed.getToken() == TipoToken.CMDIF && lookahed.getLexema().equals("else")) {
+			ConsumirElse();
+			
+		}else if(lookahed.getToken() == TipoToken.PALAVRA_CHAVE && lookahed.getLexema().equals("end")) {
+			consumirLexema(TipoToken.PALAVRA_CHAVE, "end" );
+			
+		}else {
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
+		}
+	}
+	
+	private void ConsumirIfParcial() throws Exception {
+		consumir(TipoToken.CMDIF);
+		consumirLexema(TipoToken.SIMBOLO, "(" );
+		
+		if(lookahed.getToken() == TipoToken.OPNEGACAO)
+			ConsumirNegacao();
+		else
+			consumirExpBool();
+		
+		consumirLexema(TipoToken.SIMBOLO, ")" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "then" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "end" );
+	}
+	
+	private void ConsumirIfCompleto() throws Exception {
+		consumir(TipoToken.CMDIF);
+		consumirLexema(TipoToken.SIMBOLO, "(" );
+		
+		if(lookahed.getToken() == TipoToken.OPNEGACAO)
+			ConsumirNegacao();
+		else
+			consumirExpBool();
+		
+		consumirLexema(TipoToken.SIMBOLO, ")" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "then" );
+		ConsumirIfCompleto();
+		consumirLexema(TipoToken.CMDIF, "else" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "end" );
+	}
+	
+	private void ConsumirElse() throws Exception {
 		consumirLexema(TipoToken.CMDIF, "else" );
 		ConsumirComandos();
 		consumirLexema(TipoToken.PALAVRA_CHAVE, "end" );
@@ -203,24 +227,43 @@ public class Sintatico {
 				EscopoDeclaracao();
 				
 			}else {
-				ErroInesperadoSintatico();
 				
+				System.err.println("Erro na linha "+lookahed.getLinha());
+				System.err.println("entrada inválida "+lookahed.getToken());
+				throw new Exception("ERRO");
 			}	
 		}
 		
 	}
 	
+	
+	//Escopo geral do while
+	private void EscopoRepeticao() throws Exception {
+
+		consumir(TipoToken.CMDWHILE);
+		consumirLexema(TipoToken.SIMBOLO, "(" );
+		
+		if(lookahed.getToken() == TipoToken.OPNEGACAO)
+			ConsumirNegacao();
+		else
+			consumirExpBool();
+		
+		consumirLexema(TipoToken.SIMBOLO, ")" );
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "do" );
+		ConsumirComandos();
+		consumirLexema(TipoToken.PALAVRA_CHAVE, "end" );
+		
+	}
+
 	private void consumirLexema(TipoToken simbolo, String c) throws Exception {
-		
 		TipoToken tokenAtual = lookahed.getToken();
-		
 		if(tokenAtual == simbolo && lookahed.getLexema().equals(c)) {
 			lookahed = lexico.capturaToken();
-			
 		}
 		else {
-			ErroInesperadoSintatico();
-			
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 	
@@ -273,6 +316,24 @@ public class Sintatico {
 		consumir(TipoToken.IDVAR);
 		consumir(TipoToken.IDTERMINADOR);
 	}
+	
+	private void E() throws Exception {
+		//if(lookahed.getToken() == TipoToken.IDVAR || lookahed.getToken() == TipoToken.OPIGUAL) {
+			consumir(TipoToken.IDVAR);
+			if(lookahed.getToken() == TipoToken.OPIGUAL)
+					Operadores();
+			if(lookahed.getToken() == TipoToken.EOF);
+			else	erro();
+		}
+		
+
+	private void Operadores() throws Exception {
+		consumir(TipoToken.OPIGUAL);
+		if(lookahed.getToken() == TipoToken.IDVAR)
+			E();
+		else
+			erro();
+	}
 
 	private void consumir(TipoToken token) throws Exception {
 		TipoToken tokenAtual = lookahed.getToken();
@@ -287,8 +348,11 @@ public class Sintatico {
 				Atribuicao();
 				
 			}else {
-				ErroInesperadoSintatico();	
+				System.err.println("Erro na linha "+lookahed.getLinha());
+				System.err.println("entrada inválida "+lookahed.getToken());
+				throw new Exception("ERRO");	
 			}
+			
 		}
 	}
 	
@@ -307,7 +371,9 @@ public class Sintatico {
 			break;
 			
 		default:
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 	
@@ -326,7 +392,9 @@ public class Sintatico {
 			consumirOpRel();
 		}
 		else {
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 		
 	}
@@ -336,16 +404,11 @@ public class Sintatico {
 		TipoToken tokenAtual = lookahed.getToken();
 				
 		switch (tokenAtual) {
-		
 		case VALFLOAT:
 			if(lookahed.getToken() == TipoToken.VALFLOAT) {
 				consumirExpArit();
-				
-			}else if(lookahed.getToken() == TipoToken.VALNUM){
-				lookahed = lexico.capturaToken();
-				
 			}else {
-				ErroInesperadoSintatico();
+				lookahed = lexico.capturaToken();
 			}
 			
 			break;
@@ -365,15 +428,9 @@ public class Sintatico {
 		case VALNUM:
 			if(lookahed.getToken() == TipoToken.VALNUM) {
 				consumirExpArit();
-				
-			}else if(lookahed.getToken() == TipoToken.VALFLOAT){
+			}else {
 				lookahed = lexico.capturaToken();
-				
 			}
-			else {
-				ErroInesperadoSintatico();
-			}
-			
 			break;
 			
 		case IDVAR:
@@ -386,7 +443,9 @@ public class Sintatico {
 			break;
 			
 		default:
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 	
@@ -422,7 +481,9 @@ public class Sintatico {
 			break;
 
 		default:
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha " + lookahed.getLinha());
+			System.err.println("entrada inválida " + lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 
@@ -443,7 +504,9 @@ public class Sintatico {
 			break;
 			
 		default:
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 
@@ -473,7 +536,9 @@ public class Sintatico {
 			break;
 			
 		default:
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 	
@@ -491,7 +556,9 @@ public class Sintatico {
 			break;
 		
 		default:
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 
@@ -520,14 +587,14 @@ public class Sintatico {
 			lookahed = lexico.capturaToken();
 			break;
 		default:
-			ErroInesperadoSintatico();
+			System.err.println("Erro na linha "+lookahed.getLinha());
+			System.err.println("entrada inválida "+lookahed.getToken());
+			throw new Exception("ERRO");
 		}
 	}
 
-	private void ErroInesperadoSintatico() throws Exception {
-		System.err.println("Erro na linha " + lookahed.getLinha());
-		System.err.println("Entrada Inesperada " + lookahed.getToken());
-		throw new Exception("ERRO");
+	private void erro() {
+		System.err.println("Erro sintatico linha: "+lookahed.getLinha());
 	}
 	
 	public static void main(String[] args) throws Exception {
